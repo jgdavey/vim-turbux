@@ -1,0 +1,19 @@
+Turbux is designed to speed up your TDD cycle by using a single key
+mapping to run the most relevant test based on the current file in vim.
+It uses tmux's scriptability to send commands to a chosen pane in your
+tmux session, by way of tslime.vim.
+
+For more information, see the documentation.
+
+
+Dependencies
+------------
+
+This plugin depends on tslime.vim, and becomes really awesome when used
+with rails.vim. It also makes the assumption that you're using tmux.
+
+
+Installation
+------------
+
+Use tpope's pathogen.
