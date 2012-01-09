@@ -1,0 +1,70 @@
+*turbux.txt*  Turbo Ruby tests with tmux
+
+Author:  Joshua Davey <http://joshuadavey.com/>
+License: Same terms as Vim itself (see |license|)
+
+This plugin is only available if 'compatible' is not set.
+
+This plugin depends on tslime.vim, and optionally rails.vim. As with
+tslime.vim, it is only useful within a tmux session.
+
+INTRODUCTION                                    *turbux*
+
+Turbux is designed to speed up your TDD cycle by using a single key
+mapping to run the most relevant test based on the current file in vim.
+It uses tmux's scriptability to send commands to a chosen pane in your
+tmux session, by way of tslime.vim.
+
+The default mapping for invoking the plugin is <leader>t. In a spec
+file, this will run "rspec <filename>". In a test-unit file, this will
+run "ruby -Itest <filename>". In a cucumber feature file, this will run
+"cucumber <filename>".
+
+If rails.vim is present, some additional niceties are provided. When
+rails.vim can find an alternate file for the current one, and that file
+is a spec or test, it will run the alternate file rather than the one
+you are in. For example, given the following two files:
+>
+        app/models/foo.rb
+        spec/models/foo_bar.rb
+<
+When the current file and is "foo.rb" and you invoke the plugin, the
+following command will be sent the configured tmux pane:
+>
+        rspec spec/models/foo_bar.rb
+<
+
+REPEATING                                        *turbux-repeating*
+
+If you invoke the plugin (by default, with <leader>t), and neither the
+current file nor the alternate is a test, spec or feature, turbux will
+simply send the most recent command instead. This can be quite helpful
+in situations where you are editing a related file, or in the case of
+cucumber, step definitions or a view.
+
+The |turbux| and |turbux-focused| invocations each store their own
+command, so you can use the focused one elsewhere in a test suite while
+still setting the normal one, or vice-versa.
+
+
+FOCUSED                                          *turbux-focused*
+
+Turbux also comes with bindings to run focused tests. This is
+accomplished by appending the current line number to the test command.
+In cucumber, this runs the scenario under the cursor. In rspec, this
+runs only the example or group under the cursor.
+
+The default mapping for focused test output is <leader>T.
+
+
+MAPPING                                         *turbux-mappings*
+
+<Plug>SendTestToTmux              Normal invocation
+<Plug>SendFocusedTestToTmux       Focused test (appends line number)
+
+And the following are available unless "g:no_turbux_mappings" is set:
+
+<leader>t                         Normal invocation
+<leader>T                         Focused test (appends line number)
+
+ vim:tw=78:et:ft=help:norl:
