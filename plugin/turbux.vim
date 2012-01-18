@@ -64,7 +64,7 @@ function! s:send_test(executable)
       let executable = 'echo "Warning: No command has been run yet"'
     endif
   endif
-  return Send_to_Tmux("".executable."\n")
+  return Send_to_Tmux("".executable."\n")
 endfunction
 
 " Public functions
