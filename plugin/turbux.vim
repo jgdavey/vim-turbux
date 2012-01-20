@@ -28,7 +28,11 @@ function! s:prefix_for_test(file)
   elseif a:file =~# '_test.rb$'
     return "ruby -Itest "
   elseif a:file =~# '.feature$'
-    return "cucumber "
+    if a:file =~# 'spec/'
+      return "rspec "
+    else
+      return "cucumber "
+    endif
   endif
   return ''
 endfunction
