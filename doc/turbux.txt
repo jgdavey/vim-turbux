@@ -33,6 +33,9 @@ following command will be sent the configured tmux pane:
 >
         rspec spec/models/foo_bar.rb
 <
+Note: this plugin does not work well with |autochdir|. The working
+directories for the target pane and vim should match.
+
 
 REPEATING                                        *turbux-repeating*
 
