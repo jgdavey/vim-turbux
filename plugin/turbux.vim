@@ -31,7 +31,7 @@ function! s:prefix_for_test(file)
     if a:file =~# '\<spec/'
       return "rspec -rturnip "
     else
-      return "cucumber "
+      return "cucumber -rfeatures "
     endif
   endif
   return ''
