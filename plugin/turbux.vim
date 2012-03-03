@@ -71,6 +71,15 @@ function! s:send_test(executable)
   return Send_to_Tmux("".executable."\n")
 endfunction
 
+function! ExecuteTestByName()
+  let s:line_no = search('^\s*def\s*test_', 'bcnW')
+  if s:line_no
+    return " -n \"" . split(getline(s:line_no))[1] . "\""
+  else
+    return ""
+  endif
+endfunction
+
 " Public functions
 function! SendTestToTmux(file) abort
   let executable = s:command_for_file(a:file)
@@ -80,28 +89,37 @@ function! SendTestToTmux(file) abort
   return s:send_test(executable)
 endfunction
 
-function! SendFocusedTestToTmux(file, line) abort
+function! SendLineFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
+  return SendFocusedTestToTmux(a:file,focus)
+endfunction
 
+function! SendNameFocusedTestToTmux(file, name) abort
+  let focus = "".a:name
+  return SendFocusedTestToTmux(a:file,focus)
+endfunction
+
+function! SendFocusedTestToTmux(file, focus) abort
   if s:prefix_for_test(a:file) != ''
-    let executable = s:command_for_file(a:file).focus
+    let executable = s:command_for_file(a:file).a:focus
     let g:tmux_last_focused_command = executable
   elseif exists("g:tmux_last_focused_command") && g:tmux_last_focused_command != ''
     let executable = g:tmux_last_focused_command
   else
     let executable = ''
   endif
-
   return s:send_test(executable)
 endfunction
 
 " Mappings
 nnoremap <silent> <Plug>SendTestToTmux :<C-U>w \| call SendTestToTmux(expand('%'))<CR>
-nnoremap <silent> <Plug>SendFocusedTestToTmux :<C-U>w \| call SendFocusedTestToTmux(expand('%'), line('.'))<CR>
+nnoremap <silent> <Plug>SendLineFocusedTestToTmux :<C-U>w \| call SendLineFocusedTestToTmux(expand('%'), line('.'))<CR>
+nnoremap <silent> <Plug>SendNameFocusedTestToTmux :<C-U>w \| call SendNameFocusedTestToTmux(expand('%'), ExecuteTestByName())<CR>
 
 if !exists("g:no_turbux_mappings")
   nmap <leader>t <Plug>SendTestToTmux
-  nmap <leader>T <Plug>SendFocusedTestToTmux
+  nmap <leader>T <Plug>SendLineFocusedTestToTmux
+  nmap <leader>tn <Plug>SendNameFocusedTestToTmux
 endif
 
 " vim:set ft=vim ff=unix ts=4 sw=2 sts=2:
