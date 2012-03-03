@@ -71,6 +71,15 @@ function! s:send_test(executable)
   return Send_to_Tmux("".executable."\n")
 endfunction
 
+function! s:execute_test_by_name()
+  let s:line_no = search('^\s*def\s*test_', 'bcnW')
+  if s:line_no
+    return " -n \"" . split(getline(s:line_no))[1] . "\""
+  else
+    return ""
+  endif
+endfunction
+
 " Public functions
 function! SendTestToTmux(file) abort
   let executable = s:command_for_file(a:file)
@@ -80,8 +89,12 @@ function! SendTestToTmux(file) abort
   return s:send_test(executable)
 endfunction
 
+
 function! SendFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
+  if s:prefix_for_test(a:file) == 'ruby -Itest '
+    let focus = s:execute_test_by_name()
+  endif
 
   if s:prefix_for_test(a:file) != ''
     let executable = s:command_for_file(a:file).focus
@@ -91,7 +104,6 @@ function! SendFocusedTestToTmux(file, line) abort
   else
     let executable = ''
   endif
-
   return s:send_test(executable)
 endfunction
 

@@ -63,11 +63,12 @@ The default mapping for focused test output is <leader>T.
 MAPPING                                         *turbux-mappings*
 
 <Plug>SendTestToTmux              Normal invocation
-<Plug>SendFocusedTestToTmux       Focused test (appends line number)
+<Plug>SendFocusedTestToTmux       Focused test (appends line number or named
+test)
 
 And the following are available unless "g:no_turbux_mappings" is set:
 
 <leader>t                         Normal invocation
-<leader>T                         Focused test (appends line number)
+<leader>T                         Focused test
 
  vim:tw=78:et:ft=help:norl:
