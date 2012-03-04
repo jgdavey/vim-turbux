@@ -71,7 +71,7 @@ function! s:send_test(executable)
   return Send_to_Tmux("".executable."\n")
 endfunction
 
-function! ExecuteTestByName()
+function! s:execute_test_by_name()
   let s:line_no = search('^\s*def\s*test_', 'bcnW')
   if s:line_no
     return " -n \"" . split(getline(s:line_no))[1] . "\""
@@ -89,19 +89,15 @@ function! SendTestToTmux(file) abort
   return s:send_test(executable)
 endfunction
 
-function! SendLineFocusedTestToTmux(file, line) abort
+
+function! SendFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
-  return SendFocusedTestToTmux(a:file,focus)
-endfunction
+  if s:prefix_for_test(a:file) == 'ruby -Itest '
+    let focus = s:execute_test_by_name()
+  endif
 
-function! SendNameFocusedTestToTmux(file, name) abort
-  let focus = "".a:name
-  return SendFocusedTestToTmux(a:file,focus)
-endfunction
-
-function! SendFocusedTestToTmux(file, focus) abort
   if s:prefix_for_test(a:file) != ''
-    let executable = s:command_for_file(a:file).a:focus
+    let executable = s:command_for_file(a:file).focus
     let g:tmux_last_focused_command = executable
   elseif exists("g:tmux_last_focused_command") && g:tmux_last_focused_command != ''
     let executable = g:tmux_last_focused_command
@@ -113,13 +109,11 @@ endfunction
 
 " Mappings
 nnoremap <silent> <Plug>SendTestToTmux :<C-U>w \| call SendTestToTmux(expand('%'))<CR>
-nnoremap <silent> <Plug>SendLineFocusedTestToTmux :<C-U>w \| call SendLineFocusedTestToTmux(expand('%'), line('.'))<CR>
-nnoremap <silent> <Plug>SendNameFocusedTestToTmux :<C-U>w \| call SendNameFocusedTestToTmux(expand('%'), ExecuteTestByName())<CR>
+nnoremap <silent> <Plug>SendFocusedTestToTmux :<C-U>w \| call SendFocusedTestToTmux(expand('%'), line('.'))<CR>
 
 if !exists("g:no_turbux_mappings")
   nmap <leader>t <Plug>SendTestToTmux
-  nmap <leader>T <Plug>SendLineFocusedTestToTmux
-  nmap <leader>tn <Plug>SendNameFocusedTestToTmux
+  nmap <leader>T <Plug>SendFocusedTestToTmux
 endif
 
 " vim:set ft=vim ff=unix ts=4 sw=2 sts=2:
