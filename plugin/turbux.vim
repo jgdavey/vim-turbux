@@ -25,7 +25,7 @@ endfunction
 function! s:prefix_for_test(file)
   if a:file =~# '_spec.rb$'
     return "rspec "
-  elseif a:file =~# '_test.rb$'
+  elseif a:file =~# '\(\<test_.*\|_test\)\.rb$'
     return "ruby -Itest "
   elseif a:file =~# '.feature$'
     if a:file =~# '\<spec/'
