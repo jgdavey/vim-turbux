@@ -4,7 +4,7 @@
 
 " Install this file to plugin/turbux.vim.
 " Relies on the following plugins:
-" - tslime.vim
+" - vimux
 " - rails.vim
 
 if exists('g:loaded_turbux') || &cp || v:version < 700
@@ -68,7 +68,7 @@ function! s:send_test(executable)
       let executable = 'echo "Warning: No command has been run yet"'
     endif
   endif
-  return Send_to_Tmux("".executable."\n")
+  return RunVimTmuxCommand("^U^L^U".executable."\n")
 endfunction
 
 function! s:execute_test_by_name()
