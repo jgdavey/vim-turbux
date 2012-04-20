@@ -4,7 +4,7 @@
 
 " Install this file to plugin/turbux.vim.
 " Relies on the following plugins:
-" - vimux
+" - tslime.vim or vimux
 " - rails.vim
 
 if exists('g:loaded_turbux') || &cp || v:version < 700
@@ -59,6 +59,21 @@ function! s:command_for_file(file)
   return executable
 endfunction
 
+function! s:run_command_in_tmux(command)
+  " By default, use vimux when it is available
+  if !exists("g:turbux_use_vimux")
+    let g:turbux_use_vimux = exists("*RunVimTmuxCommand")
+  endif
+
+  let executable = "".a:command
+
+  if g:turbux_use_vimux
+    return RunVimTmuxCommand(executable)
+  else
+    return Send_to_Tmux(executable."\n")
+  endif
+endfunction
+
 function! s:send_test(executable)
   let executable = a:executable
   if executable == ''
@@ -68,7 +83,7 @@ function! s:send_test(executable)
       let executable = 'echo "Warning: No command has been run yet"'
     endif
   endif
-  return RunVimTmuxCommand("^U^L^U".executable."\n")
+  return s:run_command_in_tmux(executable)
 endfunction
 
 function! s:execute_test_by_name()
@@ -88,7 +103,6 @@ function! SendTestToTmux(file) abort
   endif
   return s:send_test(executable)
 endfunction
-
 
 function! SendFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
