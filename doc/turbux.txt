@@ -71,4 +71,12 @@ And the following are available unless "g:no_turbux_mappings" is set:
 <leader>t                         Normal invocation
 <leader>T                         Focused test
 
+To use custom mappings, you can put something like the following in your
+vimrc:
+>
+          let g:no_turbux_mappings = 1
+          map <leader>rt <Plug>SendTestToTmux
+          map <leader>rT <Plug>SendFocusedTestToTmux
+<
+
  vim:tw=78:et:ft=help:norl:
