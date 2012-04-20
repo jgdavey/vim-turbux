@@ -9,8 +9,9 @@ For more information, see the documentation.
 Dependencies
 ------------
 
-This plugin depends on tslime.vim, and becomes really awesome when used
-with rails.vim. It also makes the assumption that you're using tmux.
+This plugin depends on tslime.vim or vimux, whichever is available,
+and becomes really awesome when used with rails.vim. It also makes the
+assumption that you're using tmux.
 
 **Note:** Due to a bug in the original tslime.vim plugin, please use 
 [my fork](https://github.com/jgdavey/tslime.vim).
