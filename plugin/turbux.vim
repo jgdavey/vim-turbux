@@ -23,15 +23,25 @@ function! s:first_readable_file(files) abort
 endfunction
 
 function! s:prefix_for_test(file)
+  let turbux_prefix = ""
+  let turbux_rspec  = "rspec"
+  
+  if exists('g:turbux_prefix')
+    let turbux_prefix = g:turbux_prefix." "
+  endif
+  if exists('g:turbux_rspec')
+    let turbux_rspec = g:turbux_rspec
+  endif
+
   if a:file =~# '_spec.rb$'
-    return "rspec "
+    return turbux_prefix.turbux_rspec." "
   elseif a:file =~# '\(\<test_.*\|_test\)\.rb$'
     return "ruby -Itest "
   elseif a:file =~# '.feature$'
     if a:file =~# '\<spec/'
-      return "rspec -rturnip "
+      return turbux_prefix.turbux_rspec." -rturnip "
     else
-      return "cucumber "
+      return turbux_prefix."cucumber "
     endif
   endif
   return ''
