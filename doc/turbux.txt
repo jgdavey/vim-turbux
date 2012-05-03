@@ -61,6 +61,16 @@ runs only the example or group under the cursor.
 The default mapping for focused test output is <leader>T.
 
 
+CONFIGURATION                                    *turbux-config*
+
+Use the following in you vimrc to set a common command prefix, (used in
+rspec or cucumber testing) or which command should run for rpsec (e.g. 
+rspec or spec)
+>
+          let g:turbux_prefix = 'bundle exec' " default is empty
+          let g:turbux_rspec  = 'spec'        " default is 'rspec'
+
+
 MAPPING                                         *turbux-mappings*
 
 <Plug>SendTestToTmux              Normal invocation
