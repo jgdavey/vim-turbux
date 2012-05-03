@@ -125,6 +125,23 @@ function! s:execute_test_by_name()
   endif
 endfunction
 
+" helper methods to find and parse test names in quotes
+
+function! s:gsub(str,pat,rep)
+  return substitute(a:str,'\v\C'.a:pat,a:rep,'g')
+endfunction
+
+function! s:find_test_name_in_quotes()
+  let s:line_no = search('^\s*test\s*\([''"]\).*\1', 'bcnW')
+  if s:line_no
+    let line = getline(s:line_no)
+    let string = matchstr(line,'^\s*\w\+\s*\([''"]\)\zs.*\ze\1')
+    return 'test_'.s:gsub(string,' +','_')
+  else
+    return ""
+  endif
+endfunction
+
 " Public functions
 function! SendTestToTmux(file) abort
   let executable = s:command_for_file(a:file)
@@ -136,8 +153,14 @@ endfunction
 
 function! SendFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
+
   if s:prefix_for_test(a:file) == g:turbux_command_test_unit
-    let focus = s:execute_test_by_name()
+    let quoted_test_name = s:find_test_name_in_quotes()
+    if !empty(quoted_test_name)
+      let focus = " -n \"".quoted_test_name."\""
+    else
+      let focus = s:execute_test_by_name()
+    endif
   endif
 
   if s:prefix_for_test(a:file) != ''
