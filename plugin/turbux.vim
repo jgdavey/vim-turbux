@@ -43,6 +43,12 @@ function! s:add(array, string)
     call add(a:array, a:string)
   endif
 endfunction
+
+" helper methods to find and parse test names in quotes
+function! s:gsub(str,pat,rep)
+  return substitute(a:str,'\v\C'.a:pat,a:rep,'g')
+endfunction
+
 " }}}1
 
 function! s:prefix_for_test(file)
@@ -123,12 +129,6 @@ function! s:execute_test_by_name()
   else
     return ""
   endif
-endfunction
-
-" helper methods to find and parse test names in quotes
-
-function! s:gsub(str,pat,rep)
-  return substitute(a:str,'\v\C'.a:pat,a:rep,'g')
 endfunction
 
 function! s:find_test_name_in_quotes()
