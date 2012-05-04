@@ -12,6 +12,22 @@ if exists('g:loaded_turbux') || &cp || v:version < 700
 endif
 let g:loaded_turbux = 1
 
+" Default Settings {{{1
+function! s:turbux_command_setting(name, default_value)
+  let name = 'g:turbux_command_'.a:name
+  if !exists(name)
+    exec ':let '.name.'= "'.a:default_value.'"'
+  endif
+endfunction
+
+call <SID>turbux_command_setting("rspec", "rspec")
+call <SID>turbux_command_setting("test_unit", "ruby -Itest")
+call <SID>turbux_command_setting("turnip", "rspec -rturnip")
+call <SID>turbux_command_setting("cucumber", "cucumber")
+call <SID>turbux_command_setting("prefix", "")
+" }}}1
+
+" Utility {{{1
 function! s:first_readable_file(files) abort
   let files = type(a:files) == type([]) ? copy(a:files) : split(a:files,"\n")
   for file in files
@@ -22,26 +38,23 @@ function! s:first_readable_file(files) abort
   return ''
 endfunction
 
-function! s:prefix_for_test(file)
-  let turbux_prefix = ""
-  let turbux_rspec  = "rspec"
-  
-  if exists('g:turbux_prefix')
-    let turbux_prefix = g:turbux_prefix." "
+function! s:add(array, string)
+  if type(a:string) == type("") && a:string != ""
+    call add(a:array, a:string)
   endif
-  if exists('g:turbux_rspec')
-    let turbux_rspec = g:turbux_rspec
-  endif
+endfunction
+" }}}1
 
+function! s:prefix_for_test(file)
   if a:file =~# '_spec.rb$'
-    return turbux_prefix.turbux_rspec." "
+    return g:turbux_command_rspec
   elseif a:file =~# '\(\<test_.*\|_test\)\.rb$'
-    return "ruby -Itest "
+    return g:turbux_command_test_unit
   elseif a:file =~# '.feature$'
     if a:file =~# '\<spec/'
-      return turbux_prefix.turbux_rspec." -rturnip "
+      return g:turbux_command_turnip
     else
-      return turbux_prefix."cucumber "
+      return g:turbux_command_cucumber
     endif
   endif
   return ''
@@ -59,14 +72,21 @@ function! s:alternate_for_file(file)
 endfunction
 
 function! s:command_for_file(file)
-  let executable=""
+  let executable = []
+
+  call s:add(executable, g:turbux_command_prefix)
+
   let alternate_file = s:alternate_for_file(a:file)
   if s:prefix_for_test(a:file) != ''
-    let executable = s:prefix_for_test(a:file) . a:file
+    call s:add(executable, s:prefix_for_test(a:file))
+    call s:add(executable, a:file)
   elseif alternate_file != ''
-    let executable = s:prefix_for_test(alternate_file) . alternate_file
+    call s:add(executable, s:prefix_for_test(alternate_file))
+    call s:add(executable, alternate_file)
   endif
-  return executable
+
+  " exectuable: [prefix] command file
+  return join(executable, " ")
 endfunction
 
 function! s:run_command_in_tmux(command)
@@ -139,5 +159,7 @@ if !exists("g:no_turbux_mappings")
   nmap <leader>t <Plug>SendTestToTmux
   nmap <leader>T <Plug>SendFocusedTestToTmux
 endif
+
+
 
 " vim:set ft=vim ff=unix ts=4 sw=2 sts=2:
