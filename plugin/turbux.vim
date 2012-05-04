@@ -39,7 +39,7 @@ function! s:first_readable_file(files) abort
 endfunction
 
 function! s:add(array, string)
-  if type(a:string) == type("") && a:string != ""
+  if type(a:string) == type("") && !empty(a:string)
     call add(a:array, a:string)
   endif
 endfunction
@@ -83,10 +83,10 @@ function! s:command_for_file(file)
   call s:add(executable, g:turbux_command_prefix)
 
   let alternate_file = s:alternate_for_file(a:file)
-  if s:prefix_for_test(a:file) != ''
+  if !empty(s:prefix_for_test(a:file))
     call s:add(executable, s:prefix_for_test(a:file))
     call s:add(executable, a:file)
-  elseif alternate_file != ''
+  elseif !empty(alternate_file)
     call s:add(executable, s:prefix_for_test(alternate_file))
     call s:add(executable, alternate_file)
   endif
@@ -112,8 +112,8 @@ endfunction
 
 function! s:send_test(executable)
   let executable = a:executable
-  if executable == ''
-    if exists("g:tmux_last_command") && g:tmux_last_command != ''
+  if empty(executable)
+    if exists("g:tmux_last_command") && !empty(g:tmux_last_command)
       let executable = g:tmux_last_command
     else
       let executable = 'echo "Warning: No command has been run yet"'
@@ -145,7 +145,7 @@ endfunction
 " Public functions
 function! SendTestToTmux(file) abort
   let executable = s:command_for_file(a:file)
-  if executable != ''
+  if !empty(executable)
     let g:tmux_last_command = executable
   endif
   return s:send_test(executable)
@@ -163,10 +163,10 @@ function! SendFocusedTestToTmux(file, line) abort
     endif
   endif
 
-  if s:prefix_for_test(a:file) != ''
+  if !empty(s:prefix_for_test(a:file))
     let executable = s:command_for_file(a:file).focus
     let g:tmux_last_focused_command = executable
-  elseif exists("g:tmux_last_focused_command") && g:tmux_last_focused_command != ''
+  elseif exists("g:tmux_last_focused_command") && !empty(g:tmux_last_focused_command)
     let executable = g:tmux_last_focused_command
   else
     let executable = ''
