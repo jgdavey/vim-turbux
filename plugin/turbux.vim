@@ -20,11 +20,11 @@ function! s:turbux_command_setting(name, default_value)
   endif
 endfunction
 
-call <SID>turbux_command_setting("rspec", "rspec")
-call <SID>turbux_command_setting("test_unit", "ruby -Itest")
-call <SID>turbux_command_setting("turnip", "rspec -rturnip")
-call <SID>turbux_command_setting("cucumber", "cucumber")
-call <SID>turbux_command_setting("prefix", "")
+call s:turbux_command_setting("rspec", "rspec")
+call s:turbux_command_setting("test_unit", "ruby -Itest")
+call s:turbux_command_setting("turnip", "rspec -rturnip")
+call s:turbux_command_setting("cucumber", "cucumber")
+call s:turbux_command_setting("prefix", "")
 " }}}1
 
 " Utility {{{1
@@ -136,7 +136,7 @@ endfunction
 
 function! SendFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
-  if s:prefix_for_test(a:file) == 'ruby -Itest '
+  if s:prefix_for_test(a:file) == g:turbux_command_test_unit
     let focus = s:execute_test_by_name()
   endif
 
