@@ -70,7 +70,7 @@ function! s:alternate_for_file(file)
   let related_file = ""
   if exists('g:autoloaded_rails')
     let alt = s:first_readable_file(rails#buffer().related())
-    if alt =~# '.rb$'
+    if alt =~# '\(\<test_.*\|\(_test\|_spec\)\)\.rb$'
       let related_file = alt
     endif
   endif
