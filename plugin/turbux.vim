@@ -49,8 +49,6 @@ function! s:gsub(str,pat,rep)
   return substitute(a:str,'\v\C'.a:pat,a:rep,'g')
 endfunction
 
-" }}}1
-
 function! s:prefix_for_test(file)
   if a:file =~# '_spec.rb$'
     return g:turbux_command_rspec
@@ -141,8 +139,9 @@ function! s:find_test_name_in_quotes()
     return ""
   endif
 endfunction
+"}}}1
 
-" Public functions
+" Public functions {{{1
 function! SendTestToTmux(file) abort
   let executable = s:command_for_file(a:file)
   if !empty(executable)
@@ -173,8 +172,9 @@ function! SendFocusedTestToTmux(file, line) abort
   endif
   return s:send_test(executable)
 endfunction
+" }}}1
 
-" Mappings
+" Mappings {{{1
 nnoremap <silent> <Plug>SendTestToTmux :<C-U>w \| call SendTestToTmux(expand('%'))<CR>
 nnoremap <silent> <Plug>SendFocusedTestToTmux :<C-U>w \| call SendFocusedTestToTmux(expand('%'), line('.'))<CR>
 
@@ -182,7 +182,7 @@ if !exists("g:no_turbux_mappings")
   nmap <leader>t <Plug>SendTestToTmux
   nmap <leader>T <Plug>SendFocusedTestToTmux
 endif
-
+"}}}1
 
 
 " vim:set ft=vim ff=unix ts=4 sw=2 sts=2:
