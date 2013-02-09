@@ -49,6 +49,24 @@ function! s:gsub(str,pat,rep)
   return substitute(a:str,'\v\C'.a:pat,a:rep,'g')
 endfunction
 
+function s:escape_single_quotes(str)
+  return s:gsub(a:str, "'", "\\\\'")
+endfunction
+
+function s:escape_double_quotes(str)
+  return s:gsub(a:str, '"', '\\"')
+endfunction
+
+function! s:sanitize(str)
+  return s:escape_double_quotes(s:escape_single_quotes(a:str))
+endfunction
+
+function! s:shellescape(str)
+  return s:gsub(s:sanitize(a:str), '!', '\\!')
+endfunction
+" }}}1
+
+" Test running {{{1
 function! s:prefix_for_test(file)
   if a:file =~# '_spec.rb$'
     return g:turbux_command_rspec
@@ -93,19 +111,37 @@ function! s:command_for_file(file)
   return join(executable, " ")
 endfunction
 
-function! s:run_command_in_tmux(command)
-  " By default, use vimux when it is available
-  if !exists("g:turbux_use_vimux")
-    let g:turbux_use_vimux = exists("*RunVimTmuxCommand")
-  endif
-
-  let executable = "".a:command
-
-  if g:turbux_use_vimux
-    return RunVimTmuxCommand(executable)
+function! s:determine_runner()
+  if exists("*RunVimTmuxCommand")
+    return 'vimux'
+  elseif exists("*Send_to_Tmux")
+    return 'tslime'
   else
-    return Send_to_Tmux(executable."\n")
+    return 'vim'
   endif
+endfunction
+
+function! s:run_command_with_vimux(command)
+  return RunVimTmuxCommand(s:shellescape(s:escape_double_quotes(a:command)))
+endfunction
+
+function! s:run_command_with_tslime(command)
+  let executable = s:shellescape("".a:command)
+  return Send_to_Tmux(executable."\n")
+endfunction
+
+function! s:run_command_with_vim(command)
+  exec ':silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo'
+  exec ':!'.s:shellescape(a:command)
+endfunction
+
+function! s:run_command(command)
+  " If unset, determine the correct test runner
+  if !exists("g:turbux_runner")
+    let g:turbux_runner = s:determine_runner()
+  endif
+
+  exec 'return s:run_command_with_'.g:turbux_runner.'("'.s:sanitize(a:command).'")'
 endfunction
 
 function! s:send_test(executable)
@@ -117,7 +153,7 @@ function! s:send_test(executable)
       let executable = 'echo "Warning: No command has been run yet"'
     endif
   endif
-  return s:run_command_in_tmux(executable)
+  return s:run_command(executable)
 endfunction
 
 function! s:execute_test_by_name()
