@@ -140,8 +140,8 @@ function! s:run_command(command)
   if !exists("g:turbux_runner")
     let g:turbux_runner = s:determine_runner()
   endif
-
-  exec 'return s:run_command_with_'.g:turbux_runner.'("'.s:sanitize(a:command).'")'
+  let fn = 's:run_command_with_'.g:turbux_runner
+  return call(fn, [a:command])
 endfunction
 
 function! s:send_test(executable)
