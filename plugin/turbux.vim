@@ -128,7 +128,13 @@ function! s:runner()
   endif
 
   let fn = 's:run_command_with_'.g:turbux_runner
-  return fn
+  if exists("*".fn)
+    return fn
+  else
+    echo "No such runner: ". g:turbux_runner." . Setting runner to 'vim'."
+    let g:turbux_runner = 'vim'
+    return ''
+  endif
 endfunction
 
 function! s:run_command_with_vimux(command)
@@ -146,7 +152,12 @@ function! s:run_command_with_vim(command)
 endfunction
 
 function! s:run_command(command)
-  return call(s:runner(), [a:command])
+  let runner = s:runner()
+  if !empty(runner)
+    return call(runner, [a:command])
+  else
+    return ''
+  endif
 endfunction
 
 function! s:send_test(executable)
