@@ -49,11 +49,11 @@ function! s:gsub(str,pat,rep)
   return substitute(a:str,'\v\C'.a:pat,a:rep,'g')
 endfunction
 
-function s:escape_single_quotes(str)
+function! s:escape_single_quotes(str)
   return s:gsub(a:str, "'", "\\\\'")
 endfunction
 
-function s:escape_double_quotes(str)
+function! s:escape_double_quotes(str)
   return s:gsub(a:str, '"', '\\"')
 endfunction
 
