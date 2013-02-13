@@ -111,7 +111,7 @@ function! s:command_for_file(file)
   return join(executable, " ")
 endfunction
 
-function! s:determine_runner()
+function! s:default_runner()
   if exists("*RunVimTmuxCommand")
     return 'vimux'
   elseif exists("*Send_to_Tmux")
@@ -119,6 +119,16 @@ function! s:determine_runner()
   else
     return 'vim'
   endif
+endfunction
+
+function! s:runner()
+  " If unset, determine the correct test runner
+  if !exists("g:turbux_runner")
+    let g:turbux_runner = s:default_runner()
+  endif
+
+  let fn = 's:run_command_with_'.g:turbux_runner
+  return fn
 endfunction
 
 function! s:run_command_with_vimux(command)
@@ -136,12 +146,7 @@ function! s:run_command_with_vim(command)
 endfunction
 
 function! s:run_command(command)
-  " If unset, determine the correct test runner
-  if !exists("g:turbux_runner")
-    let g:turbux_runner = s:determine_runner()
-  endif
-  let fn = 's:run_command_with_'.g:turbux_runner
-  return call(fn, [a:command])
+  return call(s:runner(), [a:command])
 endfunction
 
 function! s:send_test(executable)
