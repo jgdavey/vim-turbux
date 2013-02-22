@@ -105,10 +105,10 @@ function! s:command_for_file(file)
   let alternate_file = s:alternate_for_file(a:file)
   if !empty(s:prefix_for_test(a:file))
     call s:add(executable, s:prefix_for_test(a:file))
-    call s:add(executable, a:file)
+    call s:add(executable, s:shellescape(a:file))
   elseif !empty(alternate_file)
     call s:add(executable, s:prefix_for_test(alternate_file))
-    call s:add(executable, alternate_file)
+    call s:add(executable, s:shellescape(alternate_file))
   endif
 
   " exectuable: [prefix] command file
@@ -142,17 +142,17 @@ function! s:runner()
 endfunction
 
 function! s:run_command_with_vimux(command)
-  return RunVimTmuxCommand(s:shellescape(s:escape_double_quotes(a:command)))
+  return RunVimTmuxCommand(a:command)
 endfunction
 
 function! s:run_command_with_tslime(command)
-  let executable = s:shellescape("".a:command)
+  let executable = "".a:command
   return Send_to_Tmux(executable."\n")
 endfunction
 
 function! s:run_command_with_vim(command)
   exec ':silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo'
-  exec ':!'.s:shellescape(a:command)
+  exec ':!'.a:command
 endfunction
 
 function! s:run_command(command)
