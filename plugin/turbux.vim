@@ -82,19 +82,13 @@ function! s:prefix_for_test(file)
   return ''
 endfunction
 
-function! s:alternate_for_file(file)
-  let related_file = ""
+function! s:test_file_for(file)
   if exists('g:autoloaded_rails') && !empty(rails#buffer())
-    try
-      let alt = s:first_readable_file(rails#buffer().related())
-    catch
-      let alt = s:first_readable_file(rails#buffer().alternate())
-    endtry
-    if alt =~# '\(\<test_.*\|\(_test\|_spec\)\)\.rb$'
-      let related_file = alt
-    endif
+    return rails#buffer().test_file()
+  elseif !empty(s:prefix_for_test(a:file))
+    return a:file
   endif
-  return related_file
+  return ""
 endfunction
 
 function! s:command_for_file(file)
@@ -102,13 +96,10 @@ function! s:command_for_file(file)
 
   call s:add(executable, g:turbux_command_prefix)
 
-  let alternate_file = s:alternate_for_file(a:file)
-  if !empty(s:prefix_for_test(a:file))
-    call s:add(executable, s:prefix_for_test(a:file))
-    call s:add(executable, s:shellescape(a:file))
-  elseif !empty(alternate_file)
-    call s:add(executable, s:prefix_for_test(alternate_file))
-    call s:add(executable, s:shellescape(alternate_file))
+  let test_file = s:test_file_for(a:file)
+  if !empty(test_file)
+    call s:add(executable, s:prefix_for_test(test_file))
+    call s:add(executable, s:shellescape(test_file))
   endif
 
   " exectuable: [prefix] command file
