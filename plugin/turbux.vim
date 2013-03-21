@@ -28,16 +28,6 @@ call s:turbux_command_setting("prefix", "")
 " }}}1
 
 " Utility {{{1
-function! s:first_readable_file(files) abort
-  let files = type(a:files) == type([]) ? copy(a:files) : split(a:files,"\n")
-  for file in files
-    if filereadable(rails#app().path(file))
-      return file
-    endif
-  endfor
-  return ''
-endfunction
-
 function! s:add(array, string)
   if type(a:string) == type("") && !empty(a:string)
     call add(a:array, a:string)
@@ -49,20 +39,8 @@ function! s:gsub(str,pat,rep)
   return substitute(a:str,'\v\C'.a:pat,a:rep,'g')
 endfunction
 
-function! s:escape_single_quotes(str)
-  return s:gsub(a:str, "'", "\\\\'")
-endfunction
-
-function! s:escape_double_quotes(str)
-  return s:gsub(a:str, '"', '\\"')
-endfunction
-
-function! s:sanitize(str)
-  return s:escape_double_quotes(s:escape_single_quotes(a:str))
-endfunction
-
 function! s:shellescape(str)
-  return s:gsub(s:sanitize(a:str), '!', '\\!')
+  return s:gsub(s:gsub(s:gsub(a:str, '"', '\\"'), "'", "\\\\'"), '!', '\\!')
 endfunction
 " }}}1
 
