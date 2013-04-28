@@ -61,7 +61,7 @@ function! s:prefix_for_test(file)
 endfunction
 
 function! s:test_file_for(file)
-  if exists('g:autoloaded_rails') && !empty(rails#buffer())
+  if exists('g:autoloaded_rails') && !empty(rails#buffer()) && rails#buffer().test_file
     return rails#buffer().test_file()
   elseif !empty(s:prefix_for_test(a:file))
     return a:file
