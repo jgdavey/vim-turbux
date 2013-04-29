@@ -28,6 +28,16 @@ call s:turbux_command_setting("prefix", "")
 " }}}1
 
 " Utility {{{1
+function! s:first_readable_file(files) abort
+  let files = type(a:files) == type([]) ? copy(a:files) : split(a:files,"\n")
+  for file in files
+    if filereadable(rails#app().path(file))
+      return file
+    endif
+  endfor
+  return ''
+endfunction
+
 function! s:add(array, string)
   if type(a:string) == type("") && !empty(a:string)
     call add(a:array, a:string)
@@ -61,12 +71,14 @@ function! s:prefix_for_test(file)
 endfunction
 
 function! s:test_file_for(file)
+  let candidates = []
   if exists('g:autoloaded_rails') && !empty(rails#buffer())
-    return rails#buffer().test_file()
-  elseif !empty(s:prefix_for_test(a:file))
-    return a:file
+    call s:add(candidates, rails#buffer().test_file())
   endif
-  return ""
+  if !empty(s:prefix_for_test(a:file))
+    call s:add(candidates, a:file)
+  endif
+  return s:first_readable_file(candidates)
 endfunction
 
 function! s:command_for_file(file)
