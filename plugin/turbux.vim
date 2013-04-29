@@ -128,6 +128,10 @@ function! s:run_command_with_vim(command)
   exec ':!'.a:command
 endfunction
 
+function! s:run_command_with_echo(command)
+  echo 'Command: `'.a:command.'`'
+endfunction
+
 function! s:run_command(command)
   let runner = s:runner()
   if !empty(runner)
