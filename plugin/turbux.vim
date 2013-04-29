@@ -214,4 +214,4 @@ endif
 "}}}1
 
 
-" vim:set ft=vim ff=unix ts=4 sw=2 sts=2:
+" vim:set ft=vim ts=4 sw=2 sts=2:
