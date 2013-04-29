@@ -71,11 +71,9 @@ endfunction
 
 function! s:command_for_file(file)
   let executable = []
-
-  call s:add(executable, g:turbux_command_prefix)
-
   let test_file = s:test_file_for(a:file)
   if !empty(test_file)
+    call s:add(executable, g:turbux_command_prefix)
     call s:add(executable, s:prefix_for_test(test_file))
     call s:add(executable, s:shellescape(test_file))
   endif
