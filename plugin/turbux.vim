@@ -28,10 +28,23 @@ call s:turbux_command_setting("prefix", "")
 " }}}1
 
 " Utility {{{1
+"
+function! s:has_rails_vim()
+  return exists('g:autoloaded_rails') && !empty(rails#buffer()) && !empty(rails#app())
+endfunction
+
+function! s:filereadable(filename)
+  let f = a:filename
+  if s:has_rails_vim()
+    let f = rails#app().path(f)
+  endif
+  return filereadable(f)
+endfunction
+
 function! s:first_readable_file(files) abort
   let files = type(a:files) == type([]) ? copy(a:files) : split(a:files,"\n")
   for file in files
-    if filereadable(rails#app().path(file))
+    if s:filereadable(file)
       return file
     endif
   endfor
@@ -72,7 +85,7 @@ endfunction
 
 function! s:test_file_for(file)
   let candidates = []
-  if exists('g:autoloaded_rails') && !empty(rails#buffer())
+  if s:has_rails_vim()
     call s:add(candidates, rails#buffer().test_file())
   endif
   if !empty(s:prefix_for_test(a:file))
