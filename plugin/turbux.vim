@@ -110,7 +110,7 @@ endfunction
 function! s:default_runner()
   if exists(":Dispatch")
     return 'dispatch'
-  elseif exists("*RunVimTmuxCommand")
+  elseif exists("*VimuxRunCommand")
     return 'vimux'
   elseif exists("*Send_to_Tmux")
     return 'tslime'
@@ -140,7 +140,7 @@ function! s:run_command_with_dispatch(command)
 endfunction
 
 function! s:run_command_with_vimux(command)
-  return RunVimTmuxCommand(a:command)
+  return VimuxRunCommand(a:command)
 endfunction
 
 function! s:run_command_with_tslime(command)
