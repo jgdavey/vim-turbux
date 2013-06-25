@@ -23,7 +23,7 @@ endfunction
 call s:turbux_command_setting("rspec", "rspec")
 call s:turbux_command_setting("test_unit", "ruby -Itest")
 call s:turbux_command_setting("turnip", "rspec -rturnip")
-call s:turbux_command_setting("cucumber", "cucumber --require features")
+call s:turbux_command_setting("cucumber", "cucumber -rfeatures")
 call s:turbux_command_setting("prefix", "")
 " }}}1
 
