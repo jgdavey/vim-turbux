@@ -9,7 +9,7 @@ For more information, see the documentation.
 Dependencies
 ------------
 
-This plugin depends on [vim-dispatch][7], [tslime.vim][1] or [vimux][2],
+This plugin depends on [vim-dispatch][7], [tslime.vim][1], [vim-tmux-runner][8], or [vimux][2],
 whichever is available, and becomes really awesome when used with
 [rails.vim][3]. It also makes the assumption that you're using tmux.
 
@@ -29,3 +29,4 @@ Use [pathogen][5] or [vundle][6].
 [5]: https://github.com/tpope/vim-pathogen
 [6]: https://github.com/gmarik/vundle
 [7]: https://github.com/tpope/vim-dispatch
+[8]: https://github.com/christoomey/vim-tmux-runner

@@ -114,6 +114,8 @@ function! s:default_runner()
     return 'vimux'
   elseif exists("*Send_to_Tmux")
     return 'tslime'
+  elseif exists(":VtrSendCommandToRunner")
+    return 'vtr'
   else
     return 'vim'
   endif
@@ -146,6 +148,10 @@ endfunction
 function! s:run_command_with_tslime(command)
   let executable = "".a:command
   return Send_to_Tmux(executable."\n")
+endfunction
+
+function! s:run_command_with_vtr(command)
+  :execute ":VtrSendCommandToRunner" a:command
 endfunction
 
 function! s:run_command_with_vim(command)
