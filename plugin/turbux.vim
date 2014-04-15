@@ -20,6 +20,7 @@ function! s:turbux_command_setting(name, default_value)
   endif
 endfunction
 
+call s:turbux_command_setting("teaspoon", "teaspoon")
 call s:turbux_command_setting("rspec", "rspec")
 call s:turbux_command_setting("test_unit", "ruby -Itest")
 call s:turbux_command_setting("turnip", "rspec -rturnip")
@@ -71,6 +72,8 @@ endfunction
 function! s:prefix_for_test(file)
   if a:file =~# '_spec.rb$'
     return g:turbux_command_rspec
+  elseif a:file =~# '_spec.\(coffee\|js\)$'
+    return g:turbux_command_teaspoon
   elseif a:file =~# '\(\<test_.*\|_test\)\.rb$'
     return g:turbux_command_test_unit
   elseif a:file =~# '.feature$'
@@ -197,6 +200,17 @@ function! s:find_test_name_in_quotes()
     return ""
   endif
 endfunction
+
+function! s:find_test_name_with_it()
+  let s:line_no = search('^\s*\(it\|describe\)\s*\([''"]\).*\2', 'bcnW')
+  if s:line_no
+    let line = getline(s:line_no)
+    let string = matchstr(line,'^\s*\w\+\s*\([''"]\)\zs.*\ze\1')
+    return string 
+  else
+    return ""
+  endif
+endfunction
 "}}}1
 
 " Public functions {{{1
@@ -219,6 +233,14 @@ function! SendFocusedTestToTmux(file, line) abort
       let focus = s:execute_test_by_name()
     endif
   endif
+
+  if s:prefix_for_test(a:file) == g:turbux_command_teaspoon
+    let quoted_test_name = s:find_test_name_with_it()
+    if !empty(quoted_test_name)
+      let focus = " --filter=\"".quoted_test_name."\""
+    endif
+  endif
+
 
   if !empty(s:prefix_for_test(a:file))
     let executable = s:command_for_file(a:file).focus
