@@ -84,7 +84,15 @@ case is to use 'spec' instead of 'rspec' for older versions of RSpec.
           let g:turbux_command_turnip = 'rspec'       " default: rspec -rturnip
           let g:turbux_command_teaspoon = 'teaspoon'  " default: teaspoon
 <
-
+You can implement a custom test runner. The following is one such example:
+>
+          let g:turbux_custom_runner = 'TurbuxCustomRunner' " default: (unset)
+          function! TurbuxCustomRunner(command)
+            call VimuxRunCommand("shrink")
+            call VimuxClearRunnerHistory()
+            return VimuxRunCommand(a:command)
+          endfunction
+<
 MAPPING                                         *turbux-mappings*
 
 <Plug>SendTestToTmux              Normal invocation
