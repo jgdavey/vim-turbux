@@ -106,7 +106,7 @@ function! s:command_for_file(file)
     call s:add(executable, s:shellescape(test_file))
   endif
 
-  " exectuable: [prefix] command file
+  " executable: [prefix] command file
   return join(executable, " ")
 endfunction
 
@@ -125,19 +125,32 @@ function! s:default_runner()
 endfunction
 
 function! s:runner()
+  " If exists, use a custom user-defined runner
+  if exists("g:turbux_custom_runner")
+    let fn = g:turbux_custom_runner
+    if exists("*".fn)
+      return fn
+    else
+      echo "Custom test runner function '" . fn . "' doesn't exist."
+      unlet g:turbux_custom_runner
+    end
+  endif
+
   " If unset, determine the correct test runner
   if !exists("g:turbux_runner")
     let g:turbux_runner = s:default_runner()
   endif
 
+  " If the appropriate turbux runner if it exists
   let fn = 's:run_command_with_'.g:turbux_runner
   if exists("*".fn)
     return fn
-  else
-    echo "No such runner: ". g:turbux_runner." . Setting runner to 'vim'."
-    let g:turbux_runner = 'vim'
-    return ''
   endif
+
+  " Use 'vim' as failover runner
+  echo "No such runner: ". g:turbux_runner." . Setting runner to 'vim'."
+  let g:turbux_runner = 'vim'
+  return ''
 endfunction
 
 function! s:run_command_with_dispatch(command)
