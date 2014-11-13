@@ -24,7 +24,7 @@ call s:turbux_command_setting("teaspoon", "teaspoon")
 call s:turbux_command_setting("rspec", "rspec")
 call s:turbux_command_setting("test_unit", "ruby -Itest")
 call s:turbux_command_setting("turnip", "rspec -rturnip")
-call s:turbux_command_setting("cucumber", "cucumber -rfeatures")
+call s:turbux_command_setting("cucumber", "cucumber")
 call s:turbux_command_setting("prefix", "")
 " }}}1
 
@@ -212,7 +212,7 @@ function! s:find_test_name_with_it()
   if s:line_no
     let line = getline(s:line_no)
     let string = matchstr(line,'^\s*\w\+\s*\([''"]\)\zs.*\ze\1')
-    return string 
+    return string
   else
     return ""
   endif
