@@ -90,18 +90,34 @@ MAPPING                                         *turbux-mappings*
 <Plug>SendTestToTmux              Normal invocation
 <Plug>SendFocusedTestToTmux       Focused test (appends line number or named
 test)
+<Plug>SendLastTestToTmux          Re-runs the last invocation of the normal
+command; useful when editing the same file, but in a different position.
+<Plug>SendLastFocusedTestToTmux   Same as SendLastTestToTmux, but for the
+focused command
+<Plug>StoreTmuxLastCommand        Store the command used for a normal
+invocation, but don't run it
+<Plug>StoreTmuxLastFocusedCommand Store the command used for a focused
+test, but don't run it
 
 And the following are available unless "g:no_turbux_mappings" is set:
 
-<leader>t                         Normal invocation
-<leader>T                         Focused test
+<leader><leader>tr                Normal invocation
+<leader><leader>TR                Focused test
+<leader><leader>tt                Store normal invocation command
+<leader><leader>TT                Store focused test command
+<leader>t                         Run stored command
+<leader>T                         Run stored focused command
 
 To use custom mappings, you can put something like the following in your
 vimrc:
 >
           let g:no_turbux_mappings = 1
-          map <leader>rt <Plug>SendTestToTmux
-          map <leader>rT <Plug>SendFocusedTestToTmux
+          map <leader><leader>tr  <Plug>SendTestToTmux
+          map <leader><leader>TR  <Plug>SendFocusedTestToTmux
+          map <leader><leader>tt  <Plug>StoreTmuxLastCommand
+          map <leader><leader>TT  <Plug>StoreTmuxLastFocusedCommand
+          map <leader>t           <Plug>SendLastTestToTmux
+          map <leader>T           <Plug>SendLastFocusedTestToTmux
 <
 
  vim:tw=78:et:ft=help:norl:

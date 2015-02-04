@@ -228,6 +228,24 @@ function! SendTestToTmux(file) abort
   return s:send_test(executable)
 endfunction
 
+function! SendLastTestToTmux() abort
+  if exists("g:tmux_last_command") && !empty(g:tmux_last_command)
+    let executable = g:tmux_last_command
+  else
+    let executable = ''
+  endif
+  return s:send_test(executable)
+endfunction
+
+function! StoreTmuxLastCommand(file) abort
+  let executable = s:command_for_file(a:file)
+  if !empty(executable)
+    let g:tmux_last_command = executable
+  endif
+  echo "Stored focused command: ".executable
+  return ''
+endfunction
+
 function! SendFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
 
@@ -258,15 +276,64 @@ function! SendFocusedTestToTmux(file, line) abort
   endif
   return s:send_test(executable)
 endfunction
+
+function! SendLastFocusedTestToTmux() abort
+  if exists("g:tmux_last_focused_command") && !empty(g:tmux_last_focused_command)
+    let executable = g:tmux_last_focused_command
+  else
+    let executable = ''
+  endif
+  return s:send_test(executable)
+endfunction
+
+function! StoreTmuxLastFocusedCommand(file, line) abort
+  let focus = ":".a:line
+
+  if s:prefix_for_test(a:file) == g:turbux_command_test_unit
+    let quoted_test_name = s:find_test_name_in_quotes()
+    if !empty(quoted_test_name)
+      let focus = " -n \"".quoted_test_name."\""
+    else
+      let focus = s:execute_test_by_name()
+    endif
+  endif
+
+  if s:prefix_for_test(a:file) == g:turbux_command_teaspoon
+    let quoted_test_name = s:find_test_name_with_it()
+    if !empty(quoted_test_name)
+      let focus = " --filter=\"".quoted_test_name."\""
+    endif
+  endif
+
+
+  if !empty(s:prefix_for_test(a:file))
+    let executable = s:command_for_file(a:file).focus
+    let g:tmux_last_focused_command = executable
+  elseif exists("g:tmux_last_focused_command") && !empty(g:tmux_last_focused_command)
+    let executable = g:tmux_last_focused_command
+  else
+    let executable = ''
+  endif
+  echo "Stored focused command: ".executable
+  return ''
+endfunction
 " }}}1
 
 " Mappings {{{1
 nnoremap <silent> <Plug>SendTestToTmux :<C-U>w \| call SendTestToTmux(expand('%'))<CR>
 nnoremap <silent> <Plug>SendFocusedTestToTmux :<C-U>w \| call SendFocusedTestToTmux(expand('%'), line('.'))<CR>
+nnoremap <silent> <Plug>SendLastTestToTmux :<C-U>w \| call SendLastTestToTmux()<CR>
+nnoremap <silent> <Plug>SendLastFocusedTestToTmux :<C-U>w \| call SendLastFocusedTestToTmux()<CR>
+nnoremap <silent> <Plug>StoreTmuxLastCommand :<C-U>w \| call StoreTmuxLastCommand(expand('%'))<CR>
+nnoremap <silent> <Plug>StoreTmuxLastFocusedCommand :<C-U>w \| call StoreTmuxLastFocusedCommand(expand('%'), line('.'))<CR>
 
 if !exists("g:no_turbux_mappings")
   nmap <leader>t <Plug>SendTestToTmux
   nmap <leader>T <Plug>SendFocusedTestToTmux
+  nmap <leader><leader>tt <Plug>StoreTmuxLastCommand
+  nmap <leader><leader>TT <Plug>StoreTmuxLastFocusedCommand
+  nmap <leader><leader>tr <Plug>SendLastTestToTmux
+  nmap <leader><leader>TT <Plug>SendLastFocusedTestToTmux
 endif
 "}}}1
 
