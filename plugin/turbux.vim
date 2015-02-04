@@ -333,7 +333,7 @@ if !exists("g:no_turbux_mappings")
   nmap <leader><leader>tt <Plug>StoreTmuxLastCommand
   nmap <leader><leader>TT <Plug>StoreTmuxLastFocusedCommand
   nmap <leader><leader>tr <Plug>SendLastTestToTmux
-  nmap <leader><leader>TT <Plug>SendLastFocusedTestToTmux
+  nmap <leader><leader>TR <Plug>SendLastFocusedTestToTmux
 endif
 "}}}1
 

@@ -101,12 +101,12 @@ test, but don't run it
 
 And the following are available unless "g:no_turbux_mappings" is set:
 
-<leader><leader>tr                Normal invocation
-<leader><leader>TR                Focused test
+<leader>t                         Normal invocation
+<leader>T                         Focused test
 <leader><leader>tt                Store normal invocation command
 <leader><leader>TT                Store focused test command
-<leader>t                         Run stored command
-<leader>T                         Run stored focused command
+<leader><leader>tr                Run stored command
+<leader><leader>TR                Run stored focused command
 
 To use custom mappings, you can put something like the following in your
 vimrc:
