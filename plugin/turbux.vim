@@ -196,12 +196,23 @@ function! s:execute_test_by_name()
   endif
 endfunction
 
-function! s:find_test_name_in_quotes()
+function! s:find_unit_test_name_in_quotes()
   let s:line_no = search('^\s*test\s*\([''"]\).*\1', 'bcnW')
   if s:line_no
     let line = getline(s:line_no)
     let string = matchstr(line,'^\s*\w\+\s*\([''"]\)\zs.*\ze\1')
     return 'test_'.s:gsub(string,' +','_')
+  else
+    return ""
+  endif
+endfunction
+
+function! s:find_shoulda_test_name_in_quotes()
+  let s:line_no = search('^\s*should\s*\([''"]\).*\1', 'bcnW')
+  if s:line_no
+    let line = getline(s:line_no)
+    let string = matchstr(line,'^\s*\w\+\s*\([''"]\)\zs.*\ze\1')
+    return s:gsub(string,' +','\\ ')
   else
     return ""
   endif
@@ -232,11 +243,16 @@ function! SendFocusedTestToTmux(file, line) abort
   let focus = ":".a:line
 
   if s:prefix_for_test(a:file) == g:turbux_command_test_unit
-    let quoted_test_name = s:find_test_name_in_quotes()
+    let quoted_test_name = s:find_unit_test_name_in_quotes()
     if !empty(quoted_test_name)
       let focus = " -n \"".quoted_test_name."\""
     else
-      let focus = s:execute_test_by_name()
+      let quoted_test_name = s:find_shoulda_test_name_in_quotes()
+      if !empty(quoted_test_name)
+        let focus = " -n /".quoted_test_name."/"
+      else
+        let focus = s:execute_test_by_name()
+      endif
     endif
   endif
 
