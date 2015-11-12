@@ -268,6 +268,21 @@ function! SendFocusedTestToTmux(file, line) abort
       endif
     endif
   endif
+  
+  if g:turbux_test_type == 'minitest'
+    let quoted_test_name = s:find_unit_test_name_in_quotes()
+    if !empty(quoted_test_name)
+      let focus = " -n \"".quoted_test_name."\""
+    else
+      let quoted_test_name = s:find_shoulda_test_name_in_quotes()
+      if !empty(quoted_test_name)
+        let focus = " -n /".quoted_test_name."/"
+      else
+        let focus = " -n '/".s:find_test_name_with_it()."/'"
+      endif
+    endif
+  endif
+  echo focus
 
   if s:prefix_for_test(a:file) == g:turbux_command_teaspoon
     let quoted_test_name = s:find_test_name_with_it()
