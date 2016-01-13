@@ -4,7 +4,7 @@
 
 " Install this file to plugin/turbux.vim.
 " Relies on the following plugins:
-" - tslime.vim or vimux
+" - vim-dispatch, tslime.vim, vim-tmux-runner or vimux
 " - rails.vim
 
 if exists('g:loaded_turbux') || &cp || v:version < 700
@@ -114,7 +114,9 @@ function! s:command_for_file(file)
 endfunction
 
 function! s:default_runner()
-  if exists(":Dispatch")
+  if has('nvim')
+    return 'neovim'
+  elseif exists(":Dispatch")
     return 'dispatch'
   elseif exists("*VimuxRunCommand")
     return 'vimux'
@@ -154,6 +156,10 @@ function! s:runner()
   echo "No such runner: ". g:turbux_runner." . Setting runner to 'vim'."
   let g:turbux_runner = 'vim'
   return ''
+endfunction
+
+function! s:run_command_with_neovim(command)
+  :botright 15new | call termopen(a:command) | startinsert
 endfunction
 
 function! s:run_command_with_dispatch(command)

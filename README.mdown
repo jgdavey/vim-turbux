@@ -11,7 +11,8 @@ Dependencies
 
 This plugin depends on [vim-dispatch][7], [tslime.vim][1], [vim-tmux-runner][8], or [vimux][2],
 whichever is available, and becomes really awesome when used with
-[rails.vim][3]. It also makes the assumption that you're using tmux.
+[rails.vim][3]. If you're using neovim, it will use neovim termnial emulator as default runner.
+It also makes the assumption that you're using tmux.
 
 **Note:** Due to a bug in the original tslime.vim plugin, please use 
 [my fork][4].

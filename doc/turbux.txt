@@ -5,8 +5,9 @@ License: Same terms as Vim itself (see |license|)
 
 This plugin is only available if 'compatible' is not set.
 
-This plugin can optionally be used with tslime.vim or vimux, whichever
-is available, from within a tmux session.
+This plugin can optionally be used with vim-dispatch, tslime.vim,
+vim-tmux-runner, or vimux, whichever is available. It also supports
+neovim via terminal emulator.
 
 It also depends optionally on rails.vim.
 
@@ -68,7 +69,7 @@ Turbux attempts to intelligently determine the most appropriate test
 runner based on loaded plugins. You can manually set the test runner
 with the following setting:
 >
-          let g:turbux_runner  = 'vim'      " default: vimux OR tslime OR vim
+          let g:turbux_runner = 'vim'      " default: neovim (if running neovim) OR dispatch OR vimux OR tslime OR vtr OR vim
 >
 Use the following in your vimrc to set a common command prefix for prepending
 all commands:
