@@ -5,6 +5,14 @@ tmux session.
 
 For more information, see the documentation.
 
+Demo
+------------
+
+Here's a quick screencast from [daviddavis](https://github.com/daviddavis) on
+using turbux to run some tests.
+
+https://vimeo.com/55122881
+
 
 Dependencies
 ------------
