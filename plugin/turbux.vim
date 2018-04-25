@@ -27,6 +27,7 @@ call s:turbux_command_setting("turnip", "rspec -rturnip")
 call s:turbux_command_setting("cucumber", "cucumber")
 call s:turbux_command_setting("prefix", "")
 call s:turbux_command_setting("elixir_test", "mix test")
+call s:turbux_command_setting("elixir_spec", "mix espec")
 " }}}1
 
 " Utility {{{1
@@ -85,6 +86,8 @@ function! s:prefix_for_test(file)
     endif
   elseif a:file =~# '_test\.exs$'
     return g:turbux_command_elixir_test
+  elseif a:file =~# '_spec\.exs$'
+    return g:turbux_command_elixir_spec
   endif
   return ''
 endfunction
