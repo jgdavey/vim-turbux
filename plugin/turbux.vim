@@ -28,6 +28,8 @@ call s:turbux_command_setting("cucumber", "cucumber")
 call s:turbux_command_setting("prefix", "")
 call s:turbux_command_setting("elixir_test", "mix test")
 call s:turbux_command_setting("elixir_spec", "mix espec")
+call s:turbux_command_setting("elixir_umbrella_test", "mix test")
+call s:turbux_command_setting("elixir_umbrella_spec", "mix espec")
 " }}}1
 
 " Utility {{{1
@@ -88,6 +90,10 @@ function! s:prefix_for_test(file)
     return g:turbux_command_elixir_test
   elseif a:file =~# '_spec\.exs$'
     return g:turbux_command_elixir_spec
+  elseif a:file =~# '^apps\/.*_test\.exs$'
+    return g:turbux_command_elixir_umbrella_test
+  elseif a:file =~# '^apps\/.*_spec\.exs$'
+    return g:turbux_command_elixir_umbrella_spec
   endif
   return ''
 endfunction
@@ -103,13 +109,22 @@ function! s:test_file_for(file)
   return s:first_readable_file(candidates)
 endfunction
 
+" Assume that vim was opened at the root of the project.  'apps' is where all
+" the sub-applications live in an umbrella project.  Also assuming that no
+" other test types match this guard. 
+function! s:elixir_umbrella_project()
+  return isdirectory('apps') && isdirectory('config') && isdirectory('deps') && filereadable('config/config.exs')
+endfunction
+
 function! s:command_for_file(file)
   let executable = []
   let test_file = s:test_file_for(a:file)
   if !empty(test_file)
     call s:add(executable, g:turbux_command_prefix)
     call s:add(executable, s:prefix_for_test(test_file))
-    call s:add(executable, s:shellescape(test_file))
+    if !s:elixir_umbrella_project()
+      call s:add(executable, s:shellescape(test_file))
+    end
   endif
 
   " executable: [prefix] command file
@@ -259,6 +274,10 @@ function! SendTestToTmux(file) abort
 endfunction
 
 function! SendFocusedTestToTmux(file, line) abort
+  if s:elixir_umbrella_project()
+    return SendTestToTmux(a:file)
+  endif
+
   let focus = ":".a:line
 
   if s:prefix_for_test(a:file) == g:turbux_command_test_unit && g:turbux_test_type != 'minitest'
